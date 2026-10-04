@@ -1,13 +1,10 @@
-import React, { useState,useReducer } from "react";
-import "./../styles/App.css";
-import DropdownReact from "./DropdownReact";
-
+import React, { useState, useEffect } from "react";
 const states = [{
 	name : "Madhya Pradesh",
 	description:"Madhya Pradesh, a large state in central India, retains landmarks from eras throughout Indian history.",
 	city :[{
 		name : "Indore",
-		description:"Indore is a city in west-central India. It’s known for the 7-story Rajwada Palace and the Lal Baag Palace, which date back to Indore’s 19th-century Holkar dynasty.",
+		description:"Indore is a city in west-central India. It's known for the 7-story Rajwada Palace and the Lal Baag Palace, which date back to Indore's 19th-century Holkar dynasty.",
 		landmarks :[{
 			name : "Mhow",
 			description:"Dr. Ambedkar Nagar, commonly known as Mhow, is a cantonment in the Indore district in Madhya Pradesh state of India. It is located 23 kilometres south-west of Indore city, towards Mumbai on the old Mumbai-Agra Road.",				
@@ -17,7 +14,7 @@ const states = [{
 		}]
 	},{
 		name : "Bhopal",
-		description:"DBhopal is a city in the central Indian state of Madhya Pradesh. It's one of India’s greenest city. There are two main lakes, the Upper Lake and the Lower Lake.",
+		description:"DBhopal is a city in the central Indian state of Madhya Pradesh. It's one of India's greenest city. There are two main lakes, the Upper Lake and the Lower Lake.",
 		landmarks :[{
 			name : "MANIT",
 			description:"Maulana Azad National Institute of Technology Bhopal is a public technical university located in Bhopal, Madhya Pradesh, India. It is part of a group of publicly funded institutions in India known as National Institutes of Technology. ",
@@ -72,7 +69,7 @@ const states = [{
 	description:"Assam is a state in northeastern India known for its wildlife, archeological sites and tea plantations. ",
 	city :[{
 		name : "Guwhati",
-		description:"Guwahati is a sprawling city beside the Brahmaputra River in the northeast Indian state of Assam. It’s known for holy sites like the hilltop Kamakhya Temple,",
+		description:"Guwahati is a sprawling city beside the Brahmaputra River in the northeast Indian state of Assam. It's known for holy sites like the hilltop Kamakhya Temple,",
 		landmarks :[{
 			name : "Ganesh Guri",
 			description:"Famous because of PVR city center.",
@@ -116,7 +113,7 @@ const states = [{
 		}]
 	},{
 		name : "Gaya",
-		description:"Gaya is a holy city beside the Falgu River, in the northeast Indian state of Bihar. It’s known for 18th-century Vishnupad Mandir, a riverside temple with an octagonal shrine. Close by, ancient Mangla Gauri Temple is set on a hilltop. ",
+		description:"Gaya is a holy city beside the Falgu River, in the northeast Indian state of Bihar. It's known for 18th-century Vishnupad Mandir, a riverside temple with an octagonal shrine. Close by, ancient Mangla Gauri Temple is set on a hilltop. ",
 		landmarks :[{
 			name : "Bakraur",
 			description:"Bakraur, sometimes called Bakrour, is a village located slightly east of Bodh Gaya in the state of Bihar, India. It lies directly across the Phalgu River from the landmark of Bodh Gaya, where Gautama Buddha is said to have attained enlightenment.",
@@ -138,15 +135,87 @@ const states = [{
 }];
 
 
-function App() 
-{
-	// Do not alter/remove main div
-	return (
-	<div id="main">
-		<DropdownReact/>
-	</div>
-	);
-}
+const DropdownReact = () => {
+    const [stateIndex, setStateIndex] = useState(0);
+    const [cityIndex, setCityIndex] = useState(0);
+    const [landmarkIndex, setLandmarkIndex] = useState(0);
 
+    const [state, setState] = useState(states[0]);
+    const [city, setCity] = useState(states[0].city[0]);
+    const [landmark, setLandmark] = useState(states[0].city[0].landmarks[0]);
 
-export default App;
+    useEffect(() => {
+        setState(states[stateIndex]);
+        setCity(states[stateIndex].city[0]);
+        setLandmark(states[stateIndex].city[0].landmarks[0]);
+        setCityIndex(0);
+        setLandmarkIndex(0);
+    }, [stateIndex]);
+
+    useEffect(() => {
+        setCity(states[stateIndex].city[cityIndex]);
+        setLandmark(states[stateIndex].city[cityIndex].landmarks[0]);
+        setLandmarkIndex(0);
+    }, [cityIndex]);
+
+    useEffect(() => {
+        setLandmark(states[stateIndex].city[cityIndex].landmarks[landmarkIndex]);
+    }, [landmarkIndex]);
+
+    return (
+        <div>
+            <h1 id="state-title">{state.name}</h1>
+
+            {/* Dropdowns */}
+            <select
+                id="state"
+                value={stateIndex}
+                onChange={(e) => setStateIndex(Number(e.target.value))}
+            >
+                {states.map((s, i) => (
+                    <option key={i} value={i}>
+                        {s.name}
+                    </option>
+                ))}
+            </select>
+
+            <select
+                id="city"
+                value={cityIndex}
+                onChange={(e) => setCityIndex(Number(e.target.value))}
+            >
+                {state.city.map((c, i) => (
+                    <option key={i} value={i}>
+                        {c.name}
+                    </option>
+                ))}
+            </select>
+
+            <select
+                id="landmark"
+                value={landmarkIndex}
+                onChange={(e) => setLandmarkIndex(Number(e.target.value))}
+            >
+                {city.landmarks.map((l, i) => (
+                    <option key={i} value={i}>
+                        {l.name}
+                    </option>
+                ))}
+            </select>
+
+            {/* State Info */}
+            <h1 id="state-name">{state.name}</h1>
+            <div id="state-description">{state.description}</div>
+
+            {/* City Info */}
+            <h1 id="city-title">{city.name}</h1>
+            <div id="city-description">{city.description}</div>
+
+            {/* Landmark Info */}
+            <h1 id="landmark-title">{landmark.name}</h1>
+            <div id="landmark-description">{landmark.description}</div>
+        </div>
+    );
+};
+
+export default DropdownReact;
